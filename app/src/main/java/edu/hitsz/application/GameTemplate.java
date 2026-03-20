@@ -10,10 +10,14 @@ import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.props.BaseProp;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.time.LocalDateTime;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,9 +29,9 @@ import edu.hitsz.props.ObserverBomb;
 import edu.hitsz.score.Score;
 import edu.hitsz.score.ScoreDAO;
 import edu.hitsz.score.ScoreDAOImpl;
-import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+//import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
-public abstract class GameTemplate extends JPanel {
+public abstract class GameTemplate extends SurfaceView {
 
     protected int backGroundTop = 0;
 

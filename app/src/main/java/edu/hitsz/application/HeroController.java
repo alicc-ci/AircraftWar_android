@@ -1,8 +1,8 @@
 package edu.hitsz.application;
 
 import edu.hitsz.aircraft.HeroAircraft;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import android.view.MotionEvent;
+import android.view.View;
 
 /**
  * 英雄机控制类
@@ -11,29 +11,36 @@ import java.awt.event.MouseEvent;
  * @author hitsz
  */
 public class HeroController {
-    private GameTemplate game;
+    private View gameView;
     private HeroAircraft heroAircraft;
-    private MouseAdapter mouseAdapter;
+    private View.OnTouchListener touchListener;
 
-    public HeroController(GameTemplate game, HeroAircraft heroAircraft){
-        this.game = game;
+    public HeroController(View gameView, HeroAircraft heroAircraft) {
+        this.gameView = gameView;
         this.heroAircraft = heroAircraft;
 
-        mouseAdapter = new MouseAdapter() {
+        // 初始化触摸监听器
+        touchListener = new View.OnTouchListener() {
             @Override
-            public void mouseDragged(MouseEvent e) {
-                super.mouseDragged(e);
-                int x = e.getX();
-                int y = e.getY();
-                if ( x<0 || x>Main.WINDOW_WIDTH || y<0 || y>Main.WINDOW_HEIGHT){
-                    // 防止超出边界
-                    return;
+            public boolean onTouch(View v, MotionEvent event) {
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        break;
+
+                    case MotionEvent.ACTION_MOVE:
+                         if (x >= 0 && x <= gameView.getWidth() && y >= 0 && y <= gameView.getHeight()) {
+                            heroAircraft.setLocation(x, y);
+                        }
+                        break;
                 }
-                heroAircraft.setLocation(x, y);
+                return true;
             }
         };
 
-        game.addMouseListener(mouseAdapter);
-        game.addMouseMotionListener(mouseAdapter);
+        // 给 View 设置触摸监听
+        gameView.setOnTouchListener(touchListener);
     }
 }
