@@ -1,7 +1,7 @@
 package edu.hitsz.aircraft.enemy;
 
 import edu.hitsz.aircraft.AbstractAircraft;
-import edu.hitsz.application.Main;
+import edu.hitsz.application.MainActivity;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.props.ObserverBomb;
 
@@ -25,7 +25,7 @@ public class MobEnemy extends AbstractAircraft implements EnemyAircraft, Observe
     public void forward() {
         super.forward();
         // 判定 y 轴向下飞行出界
-        if (locationY >= Main.WINDOW_HEIGHT ) {
+        if (locationY >= MainActivity.WINDOW_HEIGHT ) {
             vanish();
         }
     }

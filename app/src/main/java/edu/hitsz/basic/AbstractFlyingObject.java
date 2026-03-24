@@ -1,10 +1,12 @@
 package edu.hitsz.basic;
 
+import android.graphics.Bitmap;
+
 import edu.hitsz.aircraft.AbstractAircraft;
 import edu.hitsz.application.ImageManager;
-import edu.hitsz.application.Main;
+import edu.hitsz.application.MainActivity;
 
-import java.awt.image.BufferedImage;
+//import java.awt.image.BufferedImage;
 
 /**
  * 可飞行对象的父类
@@ -39,7 +41,7 @@ public abstract class AbstractFlyingObject {
      * 图片,
      * null 表示未设置
      */
-    protected BufferedImage image = null;
+    protected Bitmap image = null;
 
     /**
      * x 轴长度，根据图片尺寸获得
@@ -77,7 +79,7 @@ public abstract class AbstractFlyingObject {
     public void forward() {
         locationX += speedX;
         locationY += speedY;
-        if (locationX <= 0 || locationX >= Main.WINDOW_WIDTH) {
+        if (locationX <= 0 || locationX >= MainActivity.WINDOW_WIDTH) {
             // 横向超出边界后反向
             speedX = -speedX;
         }
@@ -132,7 +134,7 @@ public abstract class AbstractFlyingObject {
         return speedY;
     }
 
-    public BufferedImage getImage() {
+    public Bitmap getImage() {
         if (image == null){
             image = ImageManager.get(this);
         }

@@ -1,10 +1,12 @@
 // 加血道具
 package edu.hitsz.props;
 
+import android.graphics.Bitmap;
+
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.application.ImageManager;
 
-import java.awt.image.BufferedImage;
+//import java.awt.image.BufferedImage;
 
 public class BloodProp extends BaseProp implements Prop{
 
@@ -27,7 +29,7 @@ public class BloodProp extends BaseProp implements Prop{
      * 获取加血道具图片
      */
     @Override
-    public BufferedImage getImage() {
+    public Bitmap getImage() {
         return ImageManager.BLOOD_PROP_IMAGE;
     }
 }

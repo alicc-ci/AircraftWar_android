@@ -1,10 +1,11 @@
 package edu.hitsz.props;
 
+import android.graphics.Bitmap;
+
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.application.ImageManager;
-import edu.hitsz.shoot.ScatterShoot;
 
-import java.awt.image.BufferedImage;
+//import java.awt.image.BufferedImage;
 
 public class BulletProp extends BaseProp implements Prop {
 
@@ -33,7 +34,7 @@ public class BulletProp extends BaseProp implements Prop {
      * 获取火力道具图片
      */
     @Override
-    public BufferedImage getImage() {
+    public Bitmap getImage() {
         return ImageManager.BULLET_PROP_IMAGE;
     }
 }

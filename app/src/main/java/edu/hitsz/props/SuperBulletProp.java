@@ -1,11 +1,11 @@
 package edu.hitsz.props;
 
+import android.graphics.Bitmap;
+
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.application.ImageManager;
-import edu.hitsz.shoot.RingShoot;
-import edu.hitsz.shoot.ScatterShoot;
 
-import java.awt.image.BufferedImage;
+//import java.awt.image.BufferedImage;
 
 public class SuperBulletProp extends BaseProp implements Prop {
 
@@ -23,7 +23,7 @@ public class SuperBulletProp extends BaseProp implements Prop {
     }
 
     @Override
-    public BufferedImage getImage() {
+    public Bitmap getImage() {
         return ImageManager.SUPERBULLET_PROP_IMAGE;
     }
 }

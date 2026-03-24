@@ -1,11 +1,12 @@
 package edu.hitsz.props;
 
+import android.graphics.Bitmap;
+
 import edu.hitsz.aircraft.HeroAircraft;
-import edu.hitsz.application.Game;
 import edu.hitsz.application.GameTemplate;
 import edu.hitsz.application.ImageManager;
 
-import java.awt.image.BufferedImage;
+//import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class BombProp extends BaseProp implements Prop{
      * 获取火力道具图片
      */
     @Override
-    public BufferedImage getImage() {
+    public Bitmap getImage() {
         return ImageManager.BOMB_PROP_IMAGE;
     }
 }

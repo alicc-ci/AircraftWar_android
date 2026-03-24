@@ -1,7 +1,7 @@
 package edu.hitsz.aircraft.enemy;
 
 import edu.hitsz.aircraft.AbstractAircraft;
-import edu.hitsz.application.Main;
+import edu.hitsz.application.MainActivity;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
 import edu.hitsz.props.BaseProp;
@@ -9,7 +9,7 @@ import edu.hitsz.props.ObserverBomb;
 import edu.hitsz.props.create.*;
 import edu.hitsz.shoot.*;
 
-import javax.swing.plaf.LabelUI;
+//import javax.swing.plaf.LabelUI;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class SuperEliteEnemy extends AbstractAircraft implements EnemyAircraft, 
     public void forward() {
         super.forward();
         // 判定 y 轴向下飞行出界
-        if (locationY >= Main.WINDOW_HEIGHT) {
+        if (locationY >= MainActivity.WINDOW_HEIGHT) {
             vanish();
         }
     }

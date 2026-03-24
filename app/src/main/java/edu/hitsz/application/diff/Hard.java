@@ -1,32 +1,37 @@
 package edu.hitsz.application.diff;
 
+import android.content.Context;
+import android.graphics.Bitmap; // 替换 BufferedImage
 import edu.hitsz.aircraft.AbstractAircraft;
-import edu.hitsz.aircraft.create_factory.*;
+import edu.hitsz.aircraft.create_factory.BossEnemyCreate;
+import edu.hitsz.aircraft.create_factory.EliteEnemyCreate;
+import edu.hitsz.aircraft.create_factory.EnemyFactory;
+import edu.hitsz.aircraft.create_factory.MobEnemyCreate;
+import edu.hitsz.aircraft.create_factory.SuperEliteEnemyCreate;
 import edu.hitsz.aircraft.enemy.BossEnemy;
 import edu.hitsz.application.GameTemplate;
 import edu.hitsz.application.ImageManager;
-
-import java.awt.image.BufferedImage;
 
 /**
  * 困难难度游戏实现
  */
 public class Hard extends GameTemplate {
 
-    private BufferedImage simpleBackground;
+    private Bitmap simpleBackground;
     private int bossSpawnCount = 0; // 记录BOSS召唤次数（初始为0）
 
     // BOSS血量配置：基础血量 + 每次递增幅度（可按需调整）
     private static final int BOSS_BASE_HP = 500;   // 第一次出现的基础血量
     private static final int BOSS_HP_INCREMENT = 200; // 每次递增的血量
 
-    public Hard() {
-        // 构造方法中加载背景图片（只加载一次）
+    public Hard(Context context) {
+        super(context); // 必须调用父类构造方法，初始化GameTemplate
+        // 加载背景图片（从已初始化的ImageManager获取）
         simpleBackground = ImageManager.HARD_BACKGROUND_IMAGE;
     }
 
     @Override
-    protected BufferedImage getBackgroundImage() {
+    protected Bitmap getBackgroundImage() {
         return simpleBackground;
     }
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sound_options">
+        <item>开</item>
+        <item>关</item>
+    </string-array>
+    <string name="sound_setting">音效设置</string>
+</resources>

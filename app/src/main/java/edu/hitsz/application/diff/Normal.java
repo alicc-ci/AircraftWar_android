@@ -1,25 +1,31 @@
 package edu.hitsz.application.diff;
 
+import android.content.Context;
+import android.graphics.Bitmap; // 替换 BufferedImage
 import edu.hitsz.aircraft.AbstractAircraft;
-import edu.hitsz.aircraft.create_factory.*;
+import edu.hitsz.aircraft.create_factory.BossEnemyCreate;
+import edu.hitsz.aircraft.create_factory.EliteEnemyCreate;
+import edu.hitsz.aircraft.create_factory.EnemyFactory;
+import edu.hitsz.aircraft.create_factory.MobEnemyCreate;
+import edu.hitsz.aircraft.create_factory.SuperEliteEnemyCreate;
 import edu.hitsz.application.GameTemplate;
 import edu.hitsz.application.ImageManager;
-
-import java.awt.image.BufferedImage;
-
 /**
  * 普通难度游戏实现
  */
 public class Normal extends GameTemplate {
 
-    private BufferedImage simpleBackground;
+    private Bitmap simpleBackground;
 
-    public Normal() {
+    // 2. 构造方法必须传入 Context，并调用 super(context)
+    public Normal(Context context) {
+        super(context); // 必须调用父类构造方法，初始化GameTemplate
+        // 加载背景图片（从已初始化的ImageManager获取）
         simpleBackground = ImageManager.NORMAL_BACKGROUND_IMAGE;
     }
 
     @Override
-    protected BufferedImage getBackgroundImage() {
+    protected Bitmap getBackgroundImage() {
         return simpleBackground;
     }
 

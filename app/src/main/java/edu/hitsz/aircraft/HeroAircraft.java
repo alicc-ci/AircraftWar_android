@@ -1,6 +1,6 @@
 package edu.hitsz.aircraft;
 
-import edu.hitsz.application.Main;
+import edu.hitsz.application.MainActivity;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.shoot.BaseShoot;
 import edu.hitsz.shoot.RingShoot;
@@ -40,8 +40,8 @@ public class HeroAircraft extends AbstractAircraft {
 
     private HeroAircraft() {
         super(
-                Main.WINDOW_WIDTH / 2,  // 初始X：屏幕中间
-                Main.WINDOW_HEIGHT - 100,  // 初始Y：屏幕底部
+                MainActivity.WINDOW_WIDTH / 2,  // 初始X：屏幕中间
+                MainActivity.WINDOW_HEIGHT - 100,  // 初始Y：屏幕底部
                 0, 0,  // 速度为0（鼠标控制移动）
                 1000  // 初始血量
         );

@@ -1,8 +1,10 @@
 package edu.hitsz.props;
 
+import android.graphics.Bitmap;
+
 import edu.hitsz.basic.AbstractFlyingObject;
 
-import java.awt.image.BufferedImage;
+//import java.awt.image.BufferedImage;
 
 /**
  * 道具基类，所有具体道具（加血、火力增强等）继承此类
@@ -23,7 +25,7 @@ public abstract class BaseProp extends AbstractFlyingObject{
     public void forward() {
         this.locationY += speedY;
         // 道具飞出屏幕下边界则失效
-        if (this.locationY >= edu.hitsz.application.Main.WINDOW_HEIGHT) {
+        if (this.locationY >= edu.hitsz.application.MainActivity.WINDOW_HEIGHT) {
             this.vanish();
         }
     }
@@ -38,7 +40,7 @@ public abstract class BaseProp extends AbstractFlyingObject{
      * 获取道具对应的图片（由具体子类指定）
      */
     @Override
-    public BufferedImage getImage() {
+    public Bitmap getImage() {
         // 子类需重写此方法，返回具体道具的图片
         return null;
     }

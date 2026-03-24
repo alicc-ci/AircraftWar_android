@@ -1,8 +1,7 @@
 package edu.hitsz.aircraft.enemy;
 
 import edu.hitsz.aircraft.AbstractAircraft;
-import edu.hitsz.application.Game;
-import edu.hitsz.application.Main;
+import edu.hitsz.application.MainActivity;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.props.BaseProp;
 import edu.hitsz.props.ObserverBomb;
@@ -35,7 +34,7 @@ public class EliteEnemy extends AbstractAircraft implements EnemyAircraft, Obser
     @Override
     public void forward() {
         super.forward();
-        if (locationY >= Main.WINDOW_HEIGHT) {
+        if (locationY >= MainActivity.WINDOW_HEIGHT) {
             vanish();
         }
     }
