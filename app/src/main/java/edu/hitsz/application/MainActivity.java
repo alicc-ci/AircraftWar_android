@@ -8,8 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import edu.hitsz.application.diff.Simple;
 
 public class MainActivity extends AppCompatActivity {
-    public static final int WINDOW_WIDTH = 512;
-    public static final int WINDOW_HEIGHT = 768;
+    public static int WINDOW_WIDTH;  // 去掉 final，去掉初始值
+    public static int WINDOW_HEIGHT;
     public static boolean isSoundOn;
 
     @Override

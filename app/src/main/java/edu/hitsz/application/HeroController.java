@@ -31,8 +31,10 @@ public class HeroController {
                         break;
 
                     case MotionEvent.ACTION_MOVE:
-                         if (x >= 0 && x <= gameView.getWidth() && y >= 0 && y <= gameView.getHeight()) {
-                            heroAircraft.setLocation(x, y);
+                        // 将飞机中心点定位在手指上方 100 像素的位置
+                        int targetY = y - 100;
+                        if (x >= 0 && x <= gameView.getWidth() && targetY >= 0 && targetY <= gameView.getHeight()) {
+                            heroAircraft.setLocation(x, targetY);
                         }
                         break;
                 }

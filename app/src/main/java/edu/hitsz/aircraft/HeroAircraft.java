@@ -40,12 +40,11 @@ public class HeroAircraft extends AbstractAircraft {
 
     private HeroAircraft() {
         super(
-                MainActivity.WINDOW_WIDTH / 2,  // 初始X：屏幕中间
-                MainActivity.WINDOW_HEIGHT - 100,  // 初始Y：屏幕底部
-                0, 0,  // 速度为0（鼠标控制移动）
-                1000  // 初始血量
+                MainActivity.WINDOW_WIDTH / 2,
+                MainActivity.WINDOW_HEIGHT - 100,
+                0, 0,            1000
         );
-//        this.strategy = new BaseShoot();
+        this.strategy = new BaseShoot(); // 确保初始状态可以射击
     }
 
     public static HeroAircraft getInstance() {
@@ -85,14 +84,15 @@ public class HeroAircraft extends AbstractAircraft {
     @Override
     public List<BaseBullet> shoot() {
         switch (bulletMode) {
-            case 0:
-                strategy = new BaseShoot();
-                break;
             case 1:
                 strategy = new ScatterShoot();
                 break;
             case 2:
                 strategy = new RingShoot();
+                break;
+            case 0:
+            default: // 任何非预期模式都退回到基础射击
+                strategy = new BaseShoot();
                 break;
         }
         return strategy.executeShoot(this);
