@@ -51,6 +51,16 @@ public class ScoreDAOImpl implements ScoreDAO {
         return scores;
     }
 
+    @Override
+    public void deleteScore(Score score) {
+        List<Score> scores = getRankingList();
+        // 通过比较姓名、分数和时间来删除匹配的记录
+        scores.removeIf(s -> s.getPlayerName().equals(score.getPlayerName()) &&
+                            s.getScore() == score.getScore() &&
+                            s.getTime().equals(score.getTime()));
+        writeToFile(scores);
+    }
+
     private void writeToFile(List<Score> scores) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(dataFile))) {
             for (Score score : scores) {

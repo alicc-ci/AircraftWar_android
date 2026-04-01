@@ -5,4 +5,5 @@ import java.util.List;
 public interface ScoreDAO {
     void addScore(Score score);
     List<Score> getRankingList();
+    void deleteScore(Score score); // 添加删除接口
 }

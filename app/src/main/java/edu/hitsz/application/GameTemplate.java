@@ -1,23 +1,32 @@
 package edu.hitsz.application;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import edu.hitsz.R;
 import edu.hitsz.aircraft.AbstractAircraft;
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.aircraft.create_factory.EnemyFactory;
@@ -29,10 +38,13 @@ import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.props.BaseProp;
 import edu.hitsz.props.BombProp;
 import edu.hitsz.props.ObserverBomb;
+import edu.hitsz.score.Score;
+import edu.hitsz.score.ScoreActivity;
+import edu.hitsz.score.ScoreDBDAO;
+import edu.hitsz.score.ScoreDAO;
 
 /**
  * 游戏模板类 - 完整优化版
- * 修复：1. 屏幕动态适配  2. 子弹穿透Bug  3. Boss重复刷新Bug  4. 并发异常
  */
 public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.Callback, Runnable {
     protected Context mContext;
@@ -42,7 +54,6 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
 
     protected final HeroAircraft heroAircraft;
 
-    // 使用 CopyOnWriteArrayList 解决多线程读写冲突
     protected final List<AbstractAircraft> enemyAircrafts = new CopyOnWriteArrayList<>();
     protected final List<BaseBullet> heroBullets = new CopyOnWriteArrayList<>();
     protected final List<BaseBullet> enemyBullets = new CopyOnWriteArrayList<>();
@@ -92,7 +103,6 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         currentGame = this;
     }
 
-    // --- 抽象方法 ---
     protected abstract EnemyFactory getEnemyFactoryByRandom(double random);
     protected abstract Bitmap getBackgroundImage();
     protected abstract AbstractAircraft createBossEnemy();
@@ -109,8 +119,6 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         isDrawing = true;
         mDrawThread = new Thread(this);
         mDrawThread.start();
-
-        // 播放背景音乐
         MusicManager.playBGM(mContext, false);
     }
 
@@ -120,16 +128,13 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         increaseDifficulty();
 
         if (timeCountAndNewCycleJudge()) {
-            // 普通敌机生成逻辑
             if (enemyAircrafts.size() < enemyMaxNumber) {
                 enemyAircrafts.add(getEnemyFactoryByRandom(Math.random()).createEnemy());
             }
-            // Boss 生成逻辑
             if (score >= nextBossScore && !bossAlive) {
                 enemyAircrafts.add(createBossEnemy());
                 bossAlive = true;
                 nextBossScore += bossScoreThreshold;
-                // 切换到 Boss 音乐
                 MusicManager.playBGM(mContext, true);
             }
             shootAction();
@@ -152,17 +157,15 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
     }
 
     private void crashCheckAction() {
-        // 1. 敌方子弹打中英雄机
         for (BaseBullet bullet : enemyBullets) {
             if (bullet.notValid()) continue;
             if (heroAircraft.crash(bullet)) {
                 heroAircraft.decreaseHp(bullet.getPower());
                 bullet.vanish();
-                MusicManager.playSound(1); // 播放中弹音效
+                MusicManager.playSound(1);
             }
         }
 
-        // 2. 英雄机子弹打中敌机
         for (BaseBullet bullet : heroBullets) {
             if (bullet.notValid()) continue;
             for (AbstractAircraft enemy : enemyAircrafts) {
@@ -170,12 +173,11 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
                 if (enemy.crash(bullet)) {
                     enemy.decreaseHp(bullet.getPower());
                     bullet.vanish();
-                    MusicManager.playSound(1); // 播放击中音效
+                    MusicManager.playSound(1);
                     if (enemy.notValid()) {
                         handleEnemyDestruction(enemy);
                         if (enemy instanceof BossEnemy) {
                             bossAlive = false;
-                            // 切回普通 BGM
                             MusicManager.playBGM(mContext, false);
                         }
                     }
@@ -184,13 +186,12 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
             }
         }
 
-        // 3. 英雄机与敌机撞击
         for (AbstractAircraft enemy : enemyAircrafts) {
             if (enemy.notValid()) continue;
             if (heroAircraft.crash(enemy)) {
                 enemy.vanish();
-                heroAircraft.decreaseHp(100);
-                MusicManager.playSound(4); // 播放爆炸音效
+                heroAircraft.decreaseHp(500);
+                MusicManager.playSound(4);
                 if (enemy instanceof BossEnemy) {
                     bossAlive = false;
                     MusicManager.playBGM(mContext, false);
@@ -198,13 +199,12 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
             }
         }
 
-        // 4. 拾取道具
         for (BaseProp prop : props) {
             if (prop.notValid()) continue;
             if (heroAircraft.crash(prop)) {
                 prop.takeEffect(heroAircraft);
                 prop.vanish();
-                MusicManager.playSound(3); // 播放获得道具音效
+                MusicManager.playSound(3);
             }
         }
 
@@ -248,12 +248,10 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
             if (canvas != null) {
                 canvas.drawColor(Color.BLACK);
                 drawBackground(canvas);
-
                 paintObjects(canvas, enemyBullets);
                 paintObjects(canvas, heroBullets);
                 paintObjects(canvas, props);
                 paintObjects(canvas, enemyAircrafts);
-
                 Bitmap heroImg = heroAircraft.getImage();
                 if (heroImg != null) {
                     canvas.drawBitmap(heroImg,
@@ -271,18 +269,13 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
     private void drawBackground(Canvas canvas) {
         Bitmap bg = getBackgroundImage();
         if (bg == null) bg = ImageManager.getBackgroundImage(mContext);
-
         int screenWidth = getWidth();
         int screenHeight = getHeight();
-
-        // 动态适配屏幕宽度
         if (scaledBackground == null || scaledBackground.getWidth() != screenWidth) {
             scaledBackground = Bitmap.createScaledBitmap(bg, screenWidth, screenHeight, true);
         }
-
         canvas.drawBitmap(scaledBackground, 0, backGroundTop - screenHeight, mPaint);
         canvas.drawBitmap(scaledBackground, 0, backGroundTop, mPaint);
-
         backGroundTop += 2;
         if (backGroundTop >= screenHeight) backGroundTop = 0;
     }
@@ -320,15 +313,60 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
     private void propsMoveAction() { props.forEach(AbstractFlyingObject::forward); }
 
     private void gameOver() {
+        if (gameOverFlag) return;
         gameOverFlag = true;
         isDrawing = false;
         executorService.shutdown();
-        
-        // 停止音乐并播放结束音效
         MusicManager.stopBGM();
         MusicManager.playSound(2);
-        
-        post(() -> Toast.makeText(mContext, "游戏结束! 得分: " + score, Toast.LENGTH_LONG).show());
+
+        // 使用 Handler 确保在主线程执行 UI 操作
+        new Handler(Looper.getMainLooper()).post(() -> {
+            try {
+                // 如果 context 不是 Activity 且无法弹出对话框，直接保底跳转
+                if (!(mContext instanceof Activity)) {
+                    startScoreActivity(mContext);
+                    return;
+                }
+
+                Activity activity = (Activity) mContext;
+                if (activity.isFinishing() || activity.isDestroyed()) {
+                    return;
+                }
+
+                View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_name_input, null);
+                EditText editText = dialogView.findViewById(R.id.edit_name);
+
+                new AlertDialog.Builder(activity)
+                        .setTitle("游戏结束")
+                        .setMessage("您的得分是: " + score + "\n请输入玩家姓名以记录:")
+                        .setView(dialogView)
+                        .setCancelable(false)
+                        .setPositiveButton("保存并查看排行", (dialog, which) -> {
+                            String name = editText.getText().toString().trim();
+                            if (name.isEmpty()) name = "匿名玩家";
+                            
+                            ScoreDAO scoreDAO = new ScoreDBDAO(mContext);
+                            scoreDAO.addScore(new Score(name, score, LocalDateTime.now()));
+
+                            startScoreActivity(mContext);
+                            activity.finish();
+                        })
+                        .show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                startScoreActivity(mContext);
+            }
+        });
+    }
+
+    private void startScoreActivity(Context context) {
+        Intent intent = new Intent(context, ScoreActivity.class);
+        // 如果 context 不是 Activity，必须添加此 Flag
+        if (!(context instanceof Activity)) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        context.startActivity(intent);
     }
 
     protected void postProcessAction() {
@@ -340,11 +378,8 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder holder) {
-        // 重要：在 Surface 创建时更新全局屏幕尺寸变量
         MainActivity.WINDOW_WIDTH = getWidth();
         MainActivity.WINDOW_HEIGHT = getHeight();
-
-        // 初始化英雄机位置：居中靠下
         heroAircraft.setLocation(getWidth() / 2f, getHeight() - 200);
     }
 
@@ -355,7 +390,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
 
     @Override public void surfaceDestroyed(@NonNull SurfaceHolder holder) { 
         isDrawing = false;
-        MusicManager.stopBGM(); // 页面销毁时停止音乐
+        MusicManager.stopBGM();
     }
 
     public static GameTemplate getCurrentGame() { return currentGame; }

@@ -33,6 +33,11 @@
             android:name="edu.hitsz.application.GameActivity"
             android:exported="true" />
 
+        <!-- 排行榜界面 -->
+        <activity
+            android:name="edu.hitsz.score.ScoreActivity"
+            android:exported="true" />
+
     </application>
 
 </manifest>
