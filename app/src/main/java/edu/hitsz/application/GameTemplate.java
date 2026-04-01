@@ -109,6 +109,9 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         isDrawing = true;
         mDrawThread = new Thread(this);
         mDrawThread.start();
+
+        // 播放背景音乐
+        MusicManager.playBGM(mContext, false);
     }
 
     private void updateLogic() {
@@ -121,11 +124,13 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
             if (enemyAircrafts.size() < enemyMaxNumber) {
                 enemyAircrafts.add(getEnemyFactoryByRandom(Math.random()).createEnemy());
             }
-            // Boss 生成逻辑：增加 bossAlive 锁
+            // Boss 生成逻辑
             if (score >= nextBossScore && !bossAlive) {
                 enemyAircrafts.add(createBossEnemy());
                 bossAlive = true;
                 nextBossScore += bossScoreThreshold;
+                // 切换到 Boss 音乐
+                MusicManager.playBGM(mContext, true);
             }
             shootAction();
         }
@@ -153,10 +158,11 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
             if (heroAircraft.crash(bullet)) {
                 heroAircraft.decreaseHp(bullet.getPower());
                 bullet.vanish();
+                MusicManager.playSound(1); // 播放中弹音效
             }
         }
 
-        // 2. 英雄机子弹打中敌机 (修复穿透)
+        // 2. 英雄机子弹打中敌机
         for (BaseBullet bullet : heroBullets) {
             if (bullet.notValid()) continue;
             for (AbstractAircraft enemy : enemyAircrafts) {
@@ -164,11 +170,16 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
                 if (enemy.crash(bullet)) {
                     enemy.decreaseHp(bullet.getPower());
                     bullet.vanish();
+                    MusicManager.playSound(1); // 播放击中音效
                     if (enemy.notValid()) {
                         handleEnemyDestruction(enemy);
-                        if (enemy instanceof BossEnemy) bossAlive = false; // Boss被摧毁，重置锁
+                        if (enemy instanceof BossEnemy) {
+                            bossAlive = false;
+                            // 切回普通 BGM
+                            MusicManager.playBGM(mContext, false);
+                        }
                     }
-                    break; // 【关键】击中一个后跳出，防止穿透
+                    break;
                 }
             }
         }
@@ -179,7 +190,11 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
             if (heroAircraft.crash(enemy)) {
                 enemy.vanish();
                 heroAircraft.decreaseHp(100);
-                if (enemy instanceof BossEnemy) bossAlive = false;
+                MusicManager.playSound(4); // 播放爆炸音效
+                if (enemy instanceof BossEnemy) {
+                    bossAlive = false;
+                    MusicManager.playBGM(mContext, false);
+                }
             }
         }
 
@@ -189,6 +204,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
             if (heroAircraft.crash(prop)) {
                 prop.takeEffect(heroAircraft);
                 prop.vanish();
+                MusicManager.playSound(3); // 播放获得道具音效
             }
         }
 
@@ -307,6 +323,11 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         gameOverFlag = true;
         isDrawing = false;
         executorService.shutdown();
+        
+        // 停止音乐并播放结束音效
+        MusicManager.stopBGM();
+        MusicManager.playSound(2);
+        
         post(() -> Toast.makeText(mContext, "游戏结束! 得分: " + score, Toast.LENGTH_LONG).show());
     }
 
@@ -332,7 +353,10 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         MainActivity.WINDOW_HEIGHT = height;
     }
 
-    @Override public void surfaceDestroyed(@NonNull SurfaceHolder holder) { isDrawing = false; }
+    @Override public void surfaceDestroyed(@NonNull SurfaceHolder holder) { 
+        isDrawing = false;
+        MusicManager.stopBGM(); // 页面销毁时停止音乐
+    }
 
     public static GameTemplate getCurrentGame() { return currentGame; }
 

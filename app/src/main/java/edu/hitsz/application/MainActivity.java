@@ -5,19 +5,20 @@ package edu.hitsz.application;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import edu.hitsz.application.diff.Simple;
 
 public class MainActivity extends AppCompatActivity {
-    public static int WINDOW_WIDTH;  // 去掉 final，去掉初始值
+    public static int WINDOW_WIDTH;
     public static int WINDOW_HEIGHT;
-    public static boolean isSoundOn;
+    public static boolean isSoundOn = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 初始化ImageManager（必须在使用图片前调用）
+        // 初始化ImageManager
         ImageManager.init(this);
+        // 初始化MusicManager
+        MusicManager.init(this);
 
         // 跳转到难度选择页
         startActivity(new Intent(this, BeginningActivity.class));

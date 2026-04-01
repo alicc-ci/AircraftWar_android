@@ -20,7 +20,7 @@ public class BossEnemyCreate implements EnemyFactory {
                 (int)(Math.random()*MainActivity.WINDOW_HEIGHT*0.05),
                 Math.random()>0.5 ? 2 : -2,
                 0,
-                1000
+                3000 // 血量从 1000 调高 3 倍到 3000
         );
     }
 }
