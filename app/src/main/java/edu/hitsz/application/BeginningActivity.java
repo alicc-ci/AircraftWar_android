@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 import edu.hitsz.R;
+import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.application.diff.Hard;
 import edu.hitsz.application.diff.Normal;
 import edu.hitsz.application.diff.Simple;
@@ -35,17 +36,28 @@ public class BeginningActivity extends AppCompatActivity {
         // 难度选择按钮
         View btnSimple = findViewById(R.id.btn_simple);
         if (btnSimple != null) {
-            btnSimple.setOnClickListener(v -> startGame(new Simple(this)));
+            btnSimple.setOnClickListener(v -> {
+                // 必须在创建游戏实例（即调用构造函数）之前重置单例
+                // 确保 GameTemplate 拿到的 HeroAircraft 实例是全新的
+                HeroAircraft.reset();
+                startGame(new Simple(this));
+            });
         }
 
         View btnNormal = findViewById(R.id.btn_normal);
         if (btnNormal != null) {
-            btnNormal.setOnClickListener(v -> startGame(new Normal(this)));
+            btnNormal.setOnClickListener(v -> {
+                HeroAircraft.reset();
+                startGame(new Normal(this));
+            });
         }
 
         View btnHard = findViewById(R.id.btn_hard);
         if (btnHard != null) {
-            btnHard.setOnClickListener(v -> startGame(new Hard(this)));
+            btnHard.setOnClickListener(v -> {
+                HeroAircraft.reset();
+                startGame(new Hard(this));
+            });
         }
     }
     private void startGame(GameTemplate game) {

@@ -10,23 +10,17 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import edu.hitsz.R;
 import edu.hitsz.aircraft.AbstractAircraft;
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.aircraft.create_factory.EnemyFactory;
@@ -38,10 +32,6 @@ import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.props.BaseProp;
 import edu.hitsz.props.BombProp;
 import edu.hitsz.props.ObserverBomb;
-import edu.hitsz.score.Score;
-import edu.hitsz.score.ScoreActivity;
-import edu.hitsz.score.ScoreDBDAO;
-import edu.hitsz.score.ScoreDAO;
 
 /**
  * 游戏模板类 - 完整优化版
@@ -320,53 +310,21 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         MusicManager.stopBGM();
         MusicManager.playSound(2);
 
-        // 使用 Handler 确保在主线程执行 UI 操作
+        // 跳转到姓名输入界面 NameInputActivity
         new Handler(Looper.getMainLooper()).post(() -> {
-            try {
-                // 如果 context 不是 Activity 且无法弹出对话框，直接保底跳转
-                if (!(mContext instanceof Activity)) {
-                    startScoreActivity(mContext);
-                    return;
-                }
-
-                Activity activity = (Activity) mContext;
-                if (activity.isFinishing() || activity.isDestroyed()) {
-                    return;
-                }
-
-                View dialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_name_input, null);
-                EditText editText = dialogView.findViewById(R.id.edit_name);
-
-                new AlertDialog.Builder(activity)
-                        .setTitle("游戏结束")
-                        .setMessage("您的得分是: " + score + "\n请输入玩家姓名以记录:")
-                        .setView(dialogView)
-                        .setCancelable(false)
-                        .setPositiveButton("保存并查看排行", (dialog, which) -> {
-                            String name = editText.getText().toString().trim();
-                            if (name.isEmpty()) name = "匿名玩家";
-                            
-                            ScoreDAO scoreDAO = new ScoreDBDAO(mContext);
-                            scoreDAO.addScore(new Score(name, score, LocalDateTime.now()));
-
-                            startScoreActivity(mContext);
-                            activity.finish();
-                        })
-                        .show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                startScoreActivity(mContext);
+            Intent intent = new Intent(mContext, NameInputActivity.class);
+            intent.putExtra("score", score);
+            // 如果 context 不是 Activity，必须添加此 Flag
+            if (!(mContext instanceof Activity)) {
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            }
+            mContext.startActivity(intent);
+            
+            // 结束当前的 GameActivity
+            if (mContext instanceof Activity) {
+                ((Activity) mContext).finish();
             }
         });
-    }
-
-    private void startScoreActivity(Context context) {
-        Intent intent = new Intent(context, ScoreActivity.class);
-        // 如果 context 不是 Activity，必须添加此 Flag
-        if (!(context instanceof Activity)) {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        }
-        context.startActivity(intent);
     }
 
     protected void postProcessAction() {

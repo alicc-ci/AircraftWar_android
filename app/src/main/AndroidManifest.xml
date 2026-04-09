@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="edu.hitsz">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -33,10 +35,17 @@
             android:name="edu.hitsz.application.GameActivity"
             android:exported="true" />
 
+        <!-- 姓名输入界面 -->
+        <activity
+            android:name="edu.hitsz.application.NameInputActivity"
+            android:exported="true" />
+
         <!-- 排行榜界面 -->
         <activity
             android:name="edu.hitsz.score.ScoreActivity"
             android:exported="true" />
+
+
 
     </application>
 

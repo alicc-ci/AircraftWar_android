@@ -110,8 +110,8 @@ public class HeroAircraft extends AbstractAircraft {
         this.hp = hp;
     }
 
-//    public static void reset() {
-//        instance = null;
-//    }
+    public static void reset() {
+        instance = null;
+    }
 
 }
