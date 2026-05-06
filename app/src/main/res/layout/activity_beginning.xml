@@ -40,7 +40,7 @@
         android:layout_height="60dp"
         android:background="#4CAF50"
         android:text="简单难度"
-        android:textColor="#0D47A1"
+        android:textColor="#FFFFFF"
         android:textSize="20sp" />
 
     <!-- 普通难度按钮 -->
@@ -51,7 +51,7 @@
         android:layout_marginTop="20dp"
         android:background="#FF9800"
         android:text="普通难度"
-        android:textColor="#795548"
+        android:textColor="#FFFFFF"
         android:textSize="20sp" />
 
     <!-- 困难难度按钮 -->
@@ -62,6 +62,17 @@
         android:text="困难难度"
         android:textSize="20sp"
         android:background="#F44336"
+        android:textColor="#FFFFFF"
+        android:layout_marginTop="20dp"/>
+
+    <!-- 联机模式按钮 -->
+    <Button
+        android:id="@+id/btn_online"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="联机模式"
+        android:textSize="20sp"
+        android:background="#2196F3"
         android:textColor="#FFFFFF"
         android:layout_marginTop="20dp"/>
 

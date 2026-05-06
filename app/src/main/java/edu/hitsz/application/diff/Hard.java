@@ -88,4 +88,9 @@ public class Hard extends GameTemplate {
             return new MobEnemyCreate();
         }
     }
+
+    @Override
+    public String getDifficultyName() {
+        return "HARD";
+    }
 }

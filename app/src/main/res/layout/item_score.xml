@@ -37,6 +37,19 @@
             android:textColor="#666666"/>
     </LinearLayout>
 
+    <!-- 模式标签 -->
+    <TextView
+        android:id="@+id/tv_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SIMPLE"
+        android:textSize="12sp"
+        android:paddingHorizontal="6dp"
+        android:paddingVertical="2dp"
+        android:background="#E0E0E0"
+        android:textColor="#333333"
+        android:layout_marginEnd="12dp"/>
+
     <TextView
         android:id="@+id/tv_score"
         android:layout_width="wrap_content"

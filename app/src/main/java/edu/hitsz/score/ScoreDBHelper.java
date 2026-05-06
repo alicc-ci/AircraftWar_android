@@ -6,20 +6,22 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class ScoreDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "aircraft_war.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2; // 版本升级
 
     public static final String TABLE_NAME = "scores";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_NAME = "player_name";
     public static final String COLUMN_SCORE = "score";
     public static final String COLUMN_TIME = "time";
+    public static final String COLUMN_DIFF = "difficulty"; // 新增列
 
     private static final String TABLE_CREATE =
             "CREATE TABLE " + TABLE_NAME + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_NAME + " TEXT, " +
                     COLUMN_SCORE + " INTEGER, " +
-                    COLUMN_TIME + " TEXT);";
+                    COLUMN_TIME + " TEXT, " +
+                    COLUMN_DIFF + " TEXT);";
 
     public ScoreDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -32,7 +34,8 @@ public class ScoreDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        onCreate(db);
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD COLUMN " + COLUMN_DIFF + " TEXT DEFAULT 'Unknown'");
+        }
     }
 }

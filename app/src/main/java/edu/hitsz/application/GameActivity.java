@@ -36,6 +36,7 @@ public class GameActivity extends AppCompatActivity {
 
         // 3. 初始化游戏 View 并启动
         mGameView = sGameInstance;
+        mGameView.mContext = this; // 关键：更新 context 为当前的 GameActivity
         setContentView(mGameView);
 
         // 启动游戏逻辑和绘制线程

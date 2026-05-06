@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BaseShoot implements ShootStrategy {
 
-    private int speed = 15;  // 子弹速度
+    private int speed = 30;  // 子弹速度
     private int power = 5;
     private int shootNum = 3;
 

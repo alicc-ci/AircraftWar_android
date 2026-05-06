@@ -19,6 +19,11 @@ public class BeginningActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // 关键：确保初始化，因为现在 BeginningActivity 是入口
+        ImageManager.init(this);
+        MusicManager.init(this);
+
         setContentView(R.layout.activity_beginning);
 
         // 音效开关
@@ -59,11 +64,18 @@ public class BeginningActivity extends AppCompatActivity {
                 startGame(new Hard(this));
             });
         }
+
+        View btnOnline = findViewById(R.id.btn_online);
+        if (btnOnline != null) {
+            btnOnline.setOnClickListener(v -> {
+                HeroAircraft.reset();
+                startGame(new GameOnline(this, "ONLINE"));
+            });
+        }
     }
     private void startGame(GameTemplate game) {
         Intent intent = new Intent(this, GameActivity.class);
         GameActivity.setGameInstance(game);
         startActivity(intent);
-        finish();
     }
 }

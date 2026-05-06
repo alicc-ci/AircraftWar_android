@@ -13,6 +13,7 @@ public class MusicManager {
     private static SoundPool soundPool;
     private static Map<Integer, Integer> soundMap = new HashMap<>();
     private static boolean isInitialized = false;
+    private static int currentBgmResId = -1; // 记录当前正在播放的背景音乐资源ID
 
     public static void init(Context context) {
         if (isInitialized) return;
@@ -21,8 +22,10 @@ public class MusicManager {
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build();
+        
+        // 增加通道数到 20，确保高频击中时不丢音
         soundPool = new SoundPool.Builder()
-                .setMaxStreams(10)
+                .setMaxStreams(20)
                 .setAudioAttributes(attrs)
                 .build();
 
@@ -41,21 +44,26 @@ public class MusicManager {
 
     public static void playBGM(Context context, boolean isBoss) {
         if (!MainActivity.isSoundOn) return;
+        
+        int resId = isBoss ? R.raw.bgm_boss : 0; // 如果普通状态没有BGM，设为0
+        
+        // 如果请求的音乐已经在播放（防止Boss战时每一帧都重复触发导致没声音），或者没有对应音乐，则直接返回
+        if (resId == currentBgmResId || resId == 0) {
+            if (resId == 0) {
+                stopBGM();
+            }
+            return;
+        }
+
         stopBGM();
         try {
-            int resId = 0;
-            if (isBoss) {
-                resId = R.raw.bgm_boss;
-            } else {
-                // 如果没有普通 BGM，这里可以返回或者播放其他背景音
-                // 目前用户说没有 BGM，所以我们只在 Boss 战播放
-                return;
-            }
-            
-            bgmPlayer = MediaPlayer.create(context, resId);
+            bgmPlayer = MediaPlayer.create(context.getApplicationContext(), resId);
             if (bgmPlayer != null) {
                 bgmPlayer.setLooping(true);
+                // 确保音量足够明显
+                bgmPlayer.setVolume(1.0f, 1.0f);
                 bgmPlayer.start();
+                currentBgmResId = resId;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -73,6 +81,7 @@ public class MusicManager {
                 e.printStackTrace();
             }
             bgmPlayer = null;
+            currentBgmResId = -1;
         }
     }
 
@@ -80,6 +89,7 @@ public class MusicManager {
         if (!MainActivity.isSoundOn) return;
         Integer id = soundMap.get(soundID);
         if (id != null) {
+            // 播放音效，音量设为最大 1.0f
             soundPool.play(id, 1.0f, 1.0f, 0, 0, 1.0f);
         }
     }

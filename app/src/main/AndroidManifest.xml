@@ -15,9 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AircraftWar">
 
-        <!-- 程序入口 -->
+        <!-- 开始界面 -->
         <activity
-            android:name="edu.hitsz.application.MainActivity"
+            android:name="edu.hitsz.application.BeginningActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,9 +25,9 @@
             </intent-filter>
         </activity>
 
-        <!-- 开始界面 -->
+        <!-- 程序入口 -->
         <activity
-            android:name="edu.hitsz.application.BeginningActivity"
+            android:name="edu.hitsz.application.MainActivity"
             android:exported="true" />
 
         <!-- 游戏界面 -->

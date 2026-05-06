@@ -1,5 +1,6 @@
 package edu.hitsz.score;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,25 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
         holder.tvScore.setText(String.valueOf(score.getScore()));
         holder.tvTime.setText(score.getTime().format(FORMATTER));
 
+        // 设置模式标签文本和颜色
+        String difficulty = score.getDifficulty();
+        holder.tvMode.setText(difficulty);
+        
+        // 根据难度设置不同的标签颜色
+        if ("SIMPLE".equalsIgnoreCase(difficulty)) {
+            holder.tvMode.setBackgroundColor(Color.parseColor("#4CAF50")); // 绿色
+            holder.tvMode.setTextColor(Color.WHITE);
+        } else if ("NORMAL".equalsIgnoreCase(difficulty)) {
+            holder.tvMode.setBackgroundColor(Color.parseColor("#FF9800")); // 橙色
+            holder.tvMode.setTextColor(Color.WHITE);
+        } else if ("HARD".equalsIgnoreCase(difficulty)) {
+            holder.tvMode.setBackgroundColor(Color.parseColor("#F44336")); // 红色
+            holder.tvMode.setTextColor(Color.WHITE);
+        } else {
+            holder.tvMode.setBackgroundColor(Color.LTGRAY);
+            holder.tvMode.setTextColor(Color.BLACK);
+        }
+
         holder.btnDelete.setOnClickListener(v -> {
             if (deleteListener != null) {
                 deleteListener.onDeleteClick(score, position);
@@ -59,7 +79,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
     }
 
     static class ScoreViewHolder extends RecyclerView.ViewHolder {
-        TextView tvRank, tvName, tvScore, tvTime;
+        TextView tvRank, tvName, tvScore, tvTime, tvMode;
         Button btnDelete;
 
         public ScoreViewHolder(@NonNull View itemView) {
@@ -68,6 +88,7 @@ public class ScoreAdapter extends RecyclerView.Adapter<ScoreAdapter.ScoreViewHol
             tvName = itemView.findViewById(R.id.tv_name);
             tvScore = itemView.findViewById(R.id.tv_score);
             tvTime = itemView.findViewById(R.id.tv_time);
+            tvMode = itemView.findViewById(R.id.tv_mode);
             btnDelete = itemView.findViewById(R.id.btn_delete);
         }
     }

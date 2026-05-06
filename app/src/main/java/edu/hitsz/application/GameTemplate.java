@@ -63,7 +63,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
 
     private final SurfaceHolder mHolder;
     private Thread mDrawThread;
-    private volatile boolean isDrawing;
+    protected volatile boolean isDrawing;
     private final Paint mPaint;
     private final Paint mTextPaint;
     private Bitmap scaledBackground;
@@ -99,6 +99,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
     protected abstract void initDifficultyParams();
     protected abstract void increaseDifficulty();
     protected abstract int getBossScore();
+    public abstract String getDifficultyName(); // 新增：获取难度名称
 
     public void action() {
         Runnable task = () -> {
@@ -112,7 +113,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         MusicManager.playBGM(mContext, false);
     }
 
-    private void updateLogic() {
+    protected void updateLogic() {
         time += timeInterval;
         heroAircraft.updatePowerUp(timeInterval);
         increaseDifficulty();
@@ -231,7 +232,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         }
     }
 
-    private void drawCanvas() {
+    protected void drawCanvas() {
         Canvas canvas = null;
         try {
             canvas = mHolder.lockCanvas();
@@ -256,7 +257,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         }
     }
 
-    private void drawBackground(Canvas canvas) {
+    protected void drawBackground(Canvas canvas) {
         Bitmap bg = getBackgroundImage();
         if (bg == null) bg = ImageManager.getBackgroundImage(mContext);
         int screenWidth = getWidth();
@@ -270,7 +271,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         if (backGroundTop >= screenHeight) backGroundTop = 0;
     }
 
-    private void drawScoreAndLife(Canvas canvas) {
+    protected void drawScoreAndLife(Canvas canvas) {
         canvas.drawText("SCORE: " + score, 40, 80, mTextPaint);
         canvas.drawText("LIFE: " + heroAircraft.getHp(), 40, 160, mTextPaint);
     }
@@ -302,7 +303,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
     private void aircraftsMoveAction() { enemyAircrafts.forEach(AbstractFlyingObject::forward); }
     private void propsMoveAction() { props.forEach(AbstractFlyingObject::forward); }
 
-    private void gameOver() {
+    protected void gameOver() {
         if (gameOverFlag) return;
         gameOverFlag = true;
         isDrawing = false;
@@ -314,6 +315,7 @@ public abstract class GameTemplate extends SurfaceView implements SurfaceHolder.
         new Handler(Looper.getMainLooper()).post(() -> {
             Intent intent = new Intent(mContext, NameInputActivity.class);
             intent.putExtra("score", score);
+            intent.putExtra("difficulty", getDifficultyName()); // 传递难度名称
             // 如果 context 不是 Activity，必须添加此 Flag
             if (!(mContext instanceof Activity)) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

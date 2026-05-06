@@ -2,10 +2,12 @@ package edu.hitsz.score;
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ScoreDAOImpl implements ScoreDAO {
     private String dataFile;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public ScoreDAOImpl(String dataFile) {
         this.dataFile = dataFile;
@@ -15,7 +17,6 @@ public class ScoreDAOImpl implements ScoreDAO {
     public void addScore(Score score) {
         List<Score> scores = getRankingList();
         scores.add(score);
-        // 排序：先按分数降序，再按时间降序（同分时最新记录在前）
         scores.sort((s1, s2) -> {
             int scoreCompare = Integer.compare(s2.getScore(), s1.getScore());
             if (scoreCompare != 0) return scoreCompare;
@@ -39,7 +40,6 @@ public class ScoreDAOImpl implements ScoreDAO {
                     scores.add(score);
                 }
             }
-            // 排序逻辑与addScore保持一致
             scores.sort((s1, s2) -> {
                 int scoreCompare = Integer.compare(s2.getScore(), s1.getScore());
                 if (scoreCompare != 0) return scoreCompare;
@@ -54,10 +54,7 @@ public class ScoreDAOImpl implements ScoreDAO {
     @Override
     public void deleteScore(Score score) {
         List<Score> scores = getRankingList();
-        // 通过比较姓名、分数和时间来删除匹配的记录
-        scores.removeIf(s -> s.getPlayerName().equals(score.getPlayerName()) &&
-                            s.getScore() == score.getScore() &&
-                            s.getTime().equals(score.getTime()));
+        scores.removeIf(s -> s.getId().equals(score.getId()));
         writeToFile(scores);
     }
 
